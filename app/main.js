@@ -9,7 +9,7 @@ require([
   "modules/example"
 ],
 
-function({%= namespace %}, $, Backbone, Example) {
+function({%= namespace %}, jQuery, Backbone, Example) {
 
   // Defining the application router, you can attach sub routers here.
   var Router = Backbone.Router.extend({
@@ -21,22 +21,13 @@ function({%= namespace %}, $, Backbone, Example) {
     index: function(hash) {
       var route = this;
       var tutorial = new Example.Views.Tutorial();
+      var main = new Backbone.LayoutManager({
+        template: "main"
+      });
 
-      // Attach the tutorial to the DOM
-      tutorial.render(function(el) {
+      main.view("#example", tutorial);
+      main.render(function (el) {
         $("#main").html(el);
-
-        // Fix for hashes in pushState and hash fragment
-        if (hash && !route._alreadyTriggered) {
-          // Reset to home, pushState support automatically converts hashes
-          Backbone.history.navigate("", false);
-
-          // Trigger the default browser behavior
-          location.hash = hash;
-
-          // Set an internal flag to stop recursive looping
-          route._alreadyTriggered = true;
-        }
       });
     }
   });
@@ -47,7 +38,7 @@ function({%= namespace %}, $, Backbone, Example) {
   // Treat the jQuery ready function as the entry point to the application.
   // Inside this function, kick-off all initialization, everything up to this
   // point should be definitions.
-  $(function() {
+  jQuery(function($) {
     // Define your master router on the application namespace and trigger all
     // navigation from this instance.
     app.router = new Router();
