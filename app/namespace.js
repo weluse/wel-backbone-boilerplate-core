@@ -36,7 +36,7 @@ function($, _, Backbone, Handlebars, Synapse, SynapseJQuery,
       var JST = window.JST = window.JST || {};
 
       if (JST[path]) {
-        return done(Handlebars.template(JST[path]));
+        return done(JST[path]);
       }
 
       $.get(path, function(contents) {
