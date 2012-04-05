@@ -1,6 +1,9 @@
 Backbone Boilerplate
 ====================
 
+This a modified fork, adding support for backbone.layoutmanager,
+backbone.datalink and handlebars templates.
+
 This boilerplate is the product of much research and frustration.  Existing
 boilerplates freely modify Backbone core, lack a build process, and are
 very prescriptive; this boilerplate changes that.
