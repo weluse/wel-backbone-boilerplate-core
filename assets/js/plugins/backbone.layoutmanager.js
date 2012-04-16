@@ -1,5 +1,5 @@
 /*!
- * backbone.layoutmanager.js v0.2.1
+ * backbone.layoutmanager.js v0.3.0
  * Copyright 2012, Tim Branyen (@tbranyen)
  * backbone.layoutmanager.js may be freely distributed under the MIT license.
  */
@@ -66,18 +66,6 @@ function viewRender(root) {
       }
 
       return root.view("", partial, true);
-    },
-
-    // Ensure that existing views get cleaned up before re-render
-    cleanup: function() {
-      _.each(root.views, function(view, key) {
-        cleanViews(view);
-
-        // Remove references to existing views if they were appended
-        if (_.isArray(view)) {
-          root.views[key] = [];
-        }
-      });
     },
 
     render: function(context) {
@@ -205,6 +193,17 @@ var LayoutManager = Backbone.View.extend({
   view: function(name, view, append) {
     var partials, options;
     var root = this;
+
+    // Ensure a view always has a views object
+    if (!this.views) {
+      this.views = {};
+    }
+
+    // Make sure any existing views are completely scrubbed of
+    // events/properties.  Do not run clean on append items.
+    if (this.views[name]) {
+      cleanViews(this.views[name]);
+    }
 
     // If this view has not been managed yet, ensure its set up to work with
     // LayoutManager correctly (proper variables and functions).
@@ -442,6 +441,9 @@ var LayoutManager = Backbone.View.extend({
   }
 });
 
+// Ensure all Views always have access to setView and view
+Backbone.View.prototype.view = LayoutManager.prototype.view;
+Backbone.View.prototype.setViews = LayoutManager.prototype.setViews;
 
 // Attach to Backbone
 Backbone.LayoutManager = LayoutManager;
