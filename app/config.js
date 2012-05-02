@@ -17,14 +17,14 @@ require.config({
     use: "../assets/js/plugins/use"
   },
 
-  use: {
+  legacy: {
     backbone: {
-      deps: ["use!underscore", "jquery"],
-      attach: "Backbone"
+      deps: ["underscore", "jquery"],
+      exports: "Backbone"
     },
 
     underscore: {
-      attach: "_"
+      exports: "_"
     }
   }
 });
