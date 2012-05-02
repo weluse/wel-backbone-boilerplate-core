@@ -20,22 +20,22 @@ require.config({
     use: "../assets/js/plugins/use"
   },
 
-  use: {
+  legacy: {
     backbone: {
-      deps: ["use!underscore", "jquery"],
-      attach: "Backbone"
+      deps: ["underscore", "jquery"],
+      exports: "Backbone"
     },
 
     underscore: {
-      attach: "_"
+      exports: "_"
     },
 
     handlebars: {
-      attach: "Handlebars"
+      exports: "Handlebars"
     },
 
     "plugins/backbone.layoutmanager": {
-      deps: ["use!backbone"]
+      deps: ["backbone"]
     }
   }
 });

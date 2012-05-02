@@ -1,18 +1,18 @@
 define([
-  "{%= namespace %}",
+  "namespace",
 
   // Libs
-  "use!backbone"
+  "backbone"
 
   // Modules
 
   // Plugins
 ],
 
-function({%= namespace %}, Backbone) {
+function(namespace, Backbone) {
 
   // Create a new module
-  var Example = {%= namespace %}.module();
+  var Example = namespace.module();
 
   // Example extendings
   Example.Model = Backbone.Model.extend({ /* ... */ });

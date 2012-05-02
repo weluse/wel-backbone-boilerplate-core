@@ -1,16 +1,16 @@
 define([
   // Libs
   "jquery",
-  "use!underscore",
-  "use!backbone",
-  "use!handlebars",
+  "underscore",
+  "backbone",
+  "handlebars",
 
   "synapse",
   "synapse/jquery",
   "synapse/backbone-model",
 
   // Plugins
-  "use!plugins/backbone.layoutmanager"
+  "plugins/backbone.layoutmanager"
 ],
 
 function($, _, Backbone, Handlebars, Synapse, SynapseJQuery,
