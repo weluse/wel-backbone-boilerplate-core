@@ -15,7 +15,6 @@ require.config({
     backbone: "../assets/js/libs/backbone"
   },
 
-<<<<<<< HEAD
   // Define legacy libraries and plugins here, these are scripts which are
   // natively incompatible with the AMD format.
   shim: {
