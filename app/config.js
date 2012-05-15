@@ -17,7 +17,7 @@ require.config({
     use: "../assets/js/plugins/use"
   },
 
-  legacy: {
+  shim: {
     backbone: {
       deps: ["underscore", "jquery"],
       exports: "Backbone"
