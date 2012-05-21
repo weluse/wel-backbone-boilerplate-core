@@ -1,8 +1,9 @@
 // Set the require.js configuration for your application.
 require.config({
-  // Initialize the application with the main application file
+  // Initialize the application with the main application file.
   deps: ["main"],
 
+  // Paths are shortcuts to make require and define calls... shorter. :)
   paths: {
     // JavaScript folders
     libs: "../assets/js/libs",
@@ -14,13 +15,12 @@ require.config({
     underscore: "../assets/js/libs/underscore",
     backbone: "../assets/js/libs/backbone",
     handlebars: "../assets/js/libs/handlebars-1.0.0.beta.6",
-    datalink: "../assets/js/libs/backbone.datalink",
-
-    // Shim Plugin
-    use: "../assets/js/plugins/use"
+    datalink: "../assets/js/libs/backbone.datalink"
   },
 
-  legacy: {
+  // Define legacy libraries and plugins here, these are scripts which are
+  // natively incompatible with the AMD format.
+  shim: {
     backbone: {
       deps: ["underscore", "jquery"],
       exports: "Backbone"

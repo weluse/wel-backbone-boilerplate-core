@@ -12,7 +12,7 @@ var requirejs, require, define;
 
     var version = "2.0.0zdev",
         commentRegExp = /(\/\*([\s\S]*?)\*\/|([^:]|^)\/\/(.*)$)/mg,
-        cjsRequireRegExp = /require\(\s*["']([^'"\s]+)["']\s*\)/g,
+        cjsRequireRegExp = /require\s*\(\s*["']([^'"\s]+)["']\s*\)/g,
         jsSuffixRegExp = /\.js$/,
         currDirRegExp = /^\.\//,
         ostring = Object.prototype.toString,
@@ -145,7 +145,7 @@ var requirejs, require, define;
                 baseUrl: "./",
                 paths: {},
                 pkgs: {},
-                legacy: {}
+                shim: {}
             },
             registry = {},
             undefEvents = {},
@@ -725,7 +725,7 @@ var requirejs, require, define;
         Module = function (map) {
             this.events = undefEvents[map.id] || {};
             this.map = map;
-            this.legacy = config.legacy[map.id];
+            this.shim = config.shim[map.id];
             this.depExports = [];
             this.depMaps = [];
             this.depMatched = [];
@@ -844,8 +844,8 @@ var requirejs, require, define;
                 //ask the plugin to load it now.
                 if (map.prefix) {
                     this.callPlugin();
-                } else if (this.legacy) {
-                    makeRequire(this, true)(this.legacy.deps || [], bind(this, function () {
+                } else if (this.shim) {
+                    makeRequire(this, true)(this.shim.deps || [], bind(this, function () {
                         this.load();
                     }));
                 } else {
@@ -885,7 +885,13 @@ var requirejs, require, define;
                     this.fetch();
                 } else if (this.error) {
                     this.emit('error', this.error);
-                } else {
+                } else if (!this.defining) {
+                    //The factory could trigger another require call
+                    //that would result in checking this module to
+                    //define itself again. If already in the process
+                    //of doing that, skip this work.
+                    this.defining = true;
+
                     if (this.depCount < 1 && !this.defined) {
                         if (isFunction(factory)) {
                             //If there is an error listener, favor passing
@@ -948,6 +954,11 @@ var requirejs, require, define;
                             waitAry = [];
                         }
                     }
+
+                    //Finished the define stage. Allow calling check again
+                    //to allow define notifications below in the case of a
+                    //cycle.
+                    this.defining = false;
 
                     if (!silent) {
                         if (this.defined && !this.defineEmitted) {
@@ -1142,7 +1153,7 @@ var requirejs, require, define;
                 //they are additive.
                 var paths = config.paths,
                     pkgs = config.pkgs,
-                    legacy = config.legacy,
+                    shim = config.shim,
                     map = config.map || {};
 
                 //Mix in the config values, favoring the new values over
@@ -1159,9 +1170,9 @@ var requirejs, require, define;
                     config.map = map;
                 }
 
-                //Merge legacy
-                if (cfg.legacy) {
-                    eachProp(cfg.legacy, function (value, id) {
+                //Merge shim
+                if (cfg.shim) {
+                    eachProp(cfg.shim, function (value, id) {
                         //Normalize the structure
                         if (isArray(value)) {
                             value = {
@@ -1169,11 +1180,11 @@ var requirejs, require, define;
                             };
                         }
                         if (value.exports && !value.exports.__buildReady) {
-                            value.exports = context.makeLegacyExports(value.exports);
+                            value.exports = context.makeShimExports(value.exports);
                         }
-                        legacy[id] = value;
+                        shim[id] = value;
                     });
-                    config.legacy = legacy;
+                    config.shim = shim;
                 }
 
                 //Adjust packages if necessary.
@@ -1212,7 +1223,7 @@ var requirejs, require, define;
                 }
             },
 
-            makeLegacyExports: function (exports) {
+            makeShimExports: function (exports) {
 
                 if (typeof exports === 'string') {
                     return function () {
@@ -1333,7 +1344,7 @@ var requirejs, require, define;
              * @param {String} moduleName the name of the module to potentially complete.
              */
             completeLoad: function (moduleName) {
-                var legacy = config.legacy[moduleName] || {},
+                var shim = config.shim[moduleName] || {},
                 found, args;
 
                 takeGlobalQueue();
@@ -1360,7 +1371,7 @@ var requirejs, require, define;
                 if (!found && !defined[moduleName]) {
                     //A script that does not call define(), so just simulate
                     //the call for it.
-                    callGetModule([moduleName, (legacy.deps || []), legacy.exports]);
+                    callGetModule([moduleName, (shim.deps || []), shim.exports]);
                 }
 
                 checkLoaded();
