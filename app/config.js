@@ -12,7 +12,7 @@ require.config({
 
     // Libraries
     jquery: "../assets/js/libs/jquery",
-    underscore: "../assets/js/libs/underscore",
+    lodash: "../assets/js/libs/lodash",
     backbone: "../assets/js/libs/backbone",
     handlebars: "../assets/js/libs/handlebars-1.0.0.beta.6",
     datalink: "../assets/js/libs/backbone.datalink"
@@ -22,7 +22,7 @@ require.config({
   // natively incompatible with the AMD format.
   shim: {
     backbone: {
-      deps: ["underscore", "jquery"],
+      deps: ["lodash", "jquery"],
       exports: "Backbone"
     },
 
